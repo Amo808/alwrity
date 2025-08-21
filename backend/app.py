@@ -81,13 +81,20 @@ app = FastAPI(
 )
 
 # Add CORS middleware
+cors_origins = [
+    "http://localhost:3000",  # React dev server
+    "http://localhost:8000",  # Backend dev server
+    "http://localhost:3001",  # Alternative React port
+    "https://alwrity-frontend.onrender.com",  # Production frontend
+]
+
+# Add environment variable for additional CORS origins
+if cors_env := os.getenv("ALLOWED_ORIGINS"):
+    cors_origins.extend([origin.strip() for origin in cors_env.split(",")])
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",  # React dev server
-        "http://localhost:8000",  # Backend dev server
-        "http://localhost:3001",  # Alternative React port
-    ],
+    allow_origins=cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
